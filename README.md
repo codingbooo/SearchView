@@ -10,5 +10,5 @@ a searchView A searchView with animator
 ## Caveats
 
 ## Developed By
-*codingbo
+* codingbo
 
