@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/search_view_bg"
+                >
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        >
+        <Button
+            android:id="@+id/bt_search"
+            android:layout_width="25dp"
+            android:background="@mipmap/ic_search"
+            android:layout_height="25dp" />
+        <TextView
+            android:id="@+id/tv_tips"
+            android:gravity="center"
+            android:text="搜索"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <EditText
+        android:id="@+id/et_input"
+
+        android:hint="@string/app_name"
+        android:inputType="none"
+        android:layout_marginStart="10dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@id/container"
+        />
+</FrameLayout>
