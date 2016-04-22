@@ -19,7 +19,8 @@ import android.widget.TextView;
 import com.example.searchview.R;
 import com.example.searchview.utils.PixelsUtil;
 
-public class SearchBar extends RelativeLayout {
+public class SearchBar extends RelativeLayout implements View.OnClickListener {
+    private Context mContext;
 
     private int mWidth;
     private int mHeight;
@@ -31,7 +32,8 @@ public class SearchBar extends RelativeLayout {
 
     private boolean isShow;
 
-    private Context mContext;
+
+    private float startX;
 
     public SearchBar(Context context) {
         super(context);
@@ -77,37 +79,34 @@ public class SearchBar extends RelativeLayout {
                 Log.d("haha", "search Clicked");
             }
         });
-//        LayoutParams layoutParams = (LayoutParams) container.getLayoutParams();
-//        Log.d("haha", "container = " + container.getWidth());
-//        Log.d("haha", "tips = " + tips.getWidth());
-//        Log.d("haha", "search = " + search.getWidth());
-//
-//
-//        layoutParams.setMargins(mWidth / 2 - container.getWidth() / 2, 0, 0, 0);
-//        container.requestLayout();
+        setOnClickListener(this);
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Log.d("haha", "dispatchTouchEvent");
-        if (isShow) {
 
-        } else {
-            onInput();
+        if (MotionEvent.ACTION_DOWN == ev.getAction()) {
+            Log.v("haha", "action down");
+            startX = ev.getX();
+        } else if(MotionEvent.ACTION_MOVE == ev.getAction()){
+            Log.v("haha", "action move");
+
+
+            return true;
+        } else if (MotionEvent.ACTION_UP == ev.getAction()) {
+            Log.v("haha", "action up");
+            float dx = startX - ev.getX();
+            if(dx > 10.0 && isShow) {
+                onDefault();
+            }
         }
-
         return super.dispatchTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.d("haha", "onTouchEvent");
-//        if (isShow) {
-//
-//        } else {
-//            onInput();
-//        }
-//        onDefault();
         return super.onTouchEvent(event);
     }
 
@@ -115,16 +114,11 @@ public class SearchBar extends RelativeLayout {
      * 输入状态
      */
     public void onInput() {
-//        LayoutParams layoutParams = (LayoutParams) container.getLayoutParams();
-//        layoutParams.setMargins(mWidth / 2 + container.getWidth() / 2, 0 , 0, 0);
-//        container.requestLayout();
-
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-//                ObjectAnimator.ofFloat(tips, "translationX", mWidth / 2 - search.getWidth()),
-                ObjectAnimator.ofFloat(container, "translationX", mWidth / 2 - search.getWidth()
-                        / 2),
-                ObjectAnimator.ofFloat(tips, "alpha", 1, 0.0f)
+                ObjectAnimator.ofFloat(container, "translationX", mWidth / 2 - search.getWidth() / 2),
+                ObjectAnimator.ofFloat(tips, "alpha", 1, 0.0f),
+                ObjectAnimator.ofFloat(input, "Alpha",0, 1)
         );
         set.setDuration(500);
         set.addListener(new Animator.AnimatorListener() {
@@ -135,20 +129,12 @@ public class SearchBar extends RelativeLayout {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                input.setVisibility(View.VISIBLE);
-//                container.setVisibility(View.GONE);
-//                LayoutParams inputParams = new LayoutParams(1, mHeight);
-//                input.setLayoutParams(inputParams);
                 input.getLayoutParams().width = mWidth - search.getWidth() * 2;
                 input.requestLayout();
+                input.setText("");
+                input.setVisibility(View.VISIBLE);
                 search.setEnabled(true);
-//                AnimatorSet animatorSet = new AnimatorSet();
-//                animatorSet.playTogether(
-//                        ObjectAnimator.ofFloat(input, "translationX", -search.getWidth()),
-//                        ObjectAnimator.ofFloat(input, "scaleX", mWidth - search.getWidth() * 3)
-//                );
-//                animatorSet.setDuration(500);
-//                animatorSet.start();
+                isShow = true;
             }
 
 
@@ -164,14 +150,47 @@ public class SearchBar extends RelativeLayout {
         });
 //        set.playSequentially();
         set.start();
-        isShow = true;
+
     }
 
     /**
      * 默认状态
      */
     public void onDefault() {
-        isShow = false;
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(input, "Alpha", 0 ),
+                ObjectAnimator.ofFloat(container,"translationX", 0),
+                ObjectAnimator.ofFloat(tips, "Alpha",0, 1)
+
+        );
+        set.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                input.setText("");
+                input.clearFocus();
+                input.setVisibility(View.GONE);
+                isShow = false;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        set.setDuration(500);
+        set.start();
+
     }
 
     @Override
@@ -181,5 +200,15 @@ public class SearchBar extends RelativeLayout {
         mWidth = MeasureSpec.getSize(widthMeasureSpec);
         mHeight = MeasureSpec.getSize(heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Log.i("haha", "onClick view == " + view.getId());
+        if (isShow) {
+//            onDefault();
+        } else {
+            onInput();
+        }
     }
 }
