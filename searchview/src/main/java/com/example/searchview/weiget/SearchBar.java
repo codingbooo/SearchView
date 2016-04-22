@@ -53,6 +53,8 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
     }
 
     private void initView(Context context, AttributeSet attrs) {
+
+        //获取控件的宽高
         for (int i = 0; i < attrs.getAttributeCount(); i++) {
             if ("layout_height".equals(attrs.getAttributeName(i))) {
                 String h = attrs.getAttributeValue(i);
@@ -71,7 +73,6 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
         tips = (TextView) findViewById(R.id.tv_tips);
         input = (EditText) findViewById(R.id.et_input);
         container = (LinearLayout) findViewById(R.id.container);
-        // TODO 得到控件大小
         search.setEnabled(false);
         search.setOnClickListener(new OnClickListener() {
             @Override
@@ -148,7 +149,6 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
 
             }
         });
-//        set.playSequentially();
         set.start();
 
     }
@@ -157,6 +157,7 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
      * 默认状态
      */
     public void onDefault() {
+
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
                 ObjectAnimator.ofFloat(input, "Alpha", 0 ),
@@ -190,15 +191,14 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
         });
         set.setDuration(500);
         set.start();
-
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.e("haha", "width = " + MeasureSpec.getSize(widthMeasureSpec));
-        Log.e("haha", "height = " + MeasureSpec.getSize(heightMeasureSpec));
-        mWidth = MeasureSpec.getSize(widthMeasureSpec);
-        mHeight = MeasureSpec.getSize(heightMeasureSpec);
+//        Log.e("haha", "width = " + MeasureSpec.getSize(widthMeasureSpec));
+//        Log.e("haha", "height = " + MeasureSpec.getSize(heightMeasureSpec));
+//        mWidth = MeasureSpec.getSize(widthMeasureSpec);
+//        mHeight = MeasureSpec.getSize(heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
