@@ -51,6 +51,8 @@ public class SearchBar extends RelativeLayout {
     }
 
     private void initView(Context context, AttributeSet attrs) {
+
+        //获取控件的宽高
         for (int i = 0; i < attrs.getAttributeCount(); i++) {
             if ("layout_height".equals(attrs.getAttributeName(i))) {
                 String h = attrs.getAttributeValue(i);
@@ -102,12 +104,6 @@ public class SearchBar extends RelativeLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.d("haha", "onTouchEvent");
-//        if (isShow) {
-//
-//        } else {
-//            onInput();
-//        }
-//        onDefault();
         return super.onTouchEvent(event);
     }
 
@@ -115,10 +111,6 @@ public class SearchBar extends RelativeLayout {
      * 输入状态
      */
     public void onInput() {
-//        LayoutParams layoutParams = (LayoutParams) container.getLayoutParams();
-//        layoutParams.setMargins(mWidth / 2 + container.getWidth() / 2, 0 , 0, 0);
-//        container.requestLayout();
-
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
 //                ObjectAnimator.ofFloat(tips, "translationX", mWidth / 2 - search.getWidth()),
@@ -136,19 +128,9 @@ public class SearchBar extends RelativeLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 input.setVisibility(View.VISIBLE);
-//                container.setVisibility(View.GONE);
-//                LayoutParams inputParams = new LayoutParams(1, mHeight);
-//                input.setLayoutParams(inputParams);
                 input.getLayoutParams().width = mWidth - search.getWidth() * 2;
                 input.requestLayout();
                 search.setEnabled(true);
-//                AnimatorSet animatorSet = new AnimatorSet();
-//                animatorSet.playTogether(
-//                        ObjectAnimator.ofFloat(input, "translationX", -search.getWidth()),
-//                        ObjectAnimator.ofFloat(input, "scaleX", mWidth - search.getWidth() * 3)
-//                );
-//                animatorSet.setDuration(500);
-//                animatorSet.start();
             }
 
 
@@ -162,7 +144,6 @@ public class SearchBar extends RelativeLayout {
 
             }
         });
-//        set.playSequentially();
         set.start();
         isShow = true;
     }
@@ -171,15 +152,18 @@ public class SearchBar extends RelativeLayout {
      * 默认状态
      */
     public void onDefault() {
+//        input.setVisibility(View.GONE);
+//        LayoutParams params = (LayoutParams) container.getLayoutParams();
+//        params.set
         isShow = false;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.e("haha", "width = " + MeasureSpec.getSize(widthMeasureSpec));
-        Log.e("haha", "height = " + MeasureSpec.getSize(heightMeasureSpec));
-        mWidth = MeasureSpec.getSize(widthMeasureSpec);
-        mHeight = MeasureSpec.getSize(heightMeasureSpec);
+//        Log.e("haha", "width = " + MeasureSpec.getSize(widthMeasureSpec));
+//        Log.e("haha", "height = " + MeasureSpec.getSize(heightMeasureSpec));
+//        mWidth = MeasureSpec.getSize(widthMeasureSpec);
+//        mHeight = MeasureSpec.getSize(heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 }
