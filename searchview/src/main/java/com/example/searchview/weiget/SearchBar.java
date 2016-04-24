@@ -101,22 +101,10 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-//        Log.d(TAG, "onInterceptTouchEvent: ");
-//        if (MotionEvent.ACTION_DOWN == ev.getAction()) {
-//            Log.v(TAG, "action down");
-//            startX = ev.getX();
-//        } else if(MotionEvent.ACTION_MOVE == ev.getAction()){
-//            Log.v(TAG, "action move");
-//
-//
-//            return true;
-//        } else if (MotionEvent.ACTION_UP == ev.getAction()) {
-//            Log.v(TAG, "action up");
-//            float dx = startX - ev.getX();
-//            if(dx > 10.0 && isShow) {
-//                onDefault();
-//            }
-//        }
+        if(!isShow) {
+            onInput();
+            return true;
+        }
         return super.onInterceptTouchEvent(ev);
     }
 
