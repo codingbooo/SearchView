@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,6 +19,8 @@ import com.example.searchview.R;
 import com.example.searchview.utils.PixelsUtil;
 
 public class SearchBar extends RelativeLayout implements View.OnClickListener {
+    private static final String TAG = "SearchBar";
+
     private Context mContext;
 
     private int mWidth;
@@ -34,6 +35,12 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
 
 
     private float startX;
+
+    public interface SearchCallBack {
+        void onClickSearch(View view, String query);
+    }
+
+    public SearchCallBack mCallBack;
 
     public SearchBar(Context context) {
         super(context);
@@ -59,11 +66,11 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
             if ("layout_height".equals(attrs.getAttributeName(i))) {
                 String h = attrs.getAttributeValue(i);
                 mHeight = PixelsUtil.dip2px(context, h);
-                Log.d("haha", "mHeight " + mHeight);
+                Log.d(TAG, "mHeight " + mHeight);
             } else if ("layout_width".equals(attrs.getAttributeName(i))) {
                 String w = attrs.getAttributeValue(i);
                 mWidth = PixelsUtil.dip2px(context, w);
-                Log.d("haha", "mWidth " + mWidth);
+                Log.d(TAG, "mWidth " + mWidth);
             }
         }
         LayoutInflater.from(context).inflate(R.layout.search_view_layout, this);
@@ -74,32 +81,66 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
         input = (EditText) findViewById(R.id.et_input);
         container = (LinearLayout) findViewById(R.id.container);
         search.setEnabled(false);
+//        search.setClickable(false);
         search.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("haha", "search Clicked");
+                if (isShow) {
+                    Log.d(TAG, "search Clicked");
+                    if (mCallBack != null) {
+                        mCallBack.onClickSearch(getRootView(), input.getText().toString());
+                    }
+                } else {
+                    onInput();
+                }
             }
         });
-        setOnClickListener(this);
+//        setOnClickListener(this);
+    }
+
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+//        Log.d(TAG, "onInterceptTouchEvent: ");
+//        if (MotionEvent.ACTION_DOWN == ev.getAction()) {
+//            Log.v(TAG, "action down");
+//            startX = ev.getX();
+//        } else if(MotionEvent.ACTION_MOVE == ev.getAction()){
+//            Log.v(TAG, "action move");
+//
+//
+//            return true;
+//        } else if (MotionEvent.ACTION_UP == ev.getAction()) {
+//            Log.v(TAG, "action up");
+//            float dx = startX - ev.getX();
+//            if(dx > 10.0 && isShow) {
+//                onDefault();
+//            }
+//        }
+        return super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.d("haha", "dispatchTouchEvent");
+        Log.d(TAG, "dispatchTouchEvent");
 
         if (MotionEvent.ACTION_DOWN == ev.getAction()) {
-            Log.v("haha", "action down");
+            Log.v(TAG, "action down");
             startX = ev.getX();
-        } else if(MotionEvent.ACTION_MOVE == ev.getAction()){
-            Log.v("haha", "action move");
+        } else if (MotionEvent.ACTION_MOVE == ev.getAction()) {
+            Log.v(TAG, "action move");
 
 
-            return true;
+//            return true;
         } else if (MotionEvent.ACTION_UP == ev.getAction()) {
-            Log.v("haha", "action up");
+            Log.v(TAG, "action up");
             float dx = startX - ev.getX();
-            if(dx > 10.0 && isShow) {
+            if (!isShow) {
+                onInput();
+            }
+            if (dx > 15.0 && isShow) {
                 onDefault();
+                return true;
             }
         }
         return super.dispatchTouchEvent(ev);
@@ -107,7 +148,7 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d("haha", "onTouchEvent");
+        Log.d(TAG, "onTouchEvent");
         return super.onTouchEvent(event);
     }
 
@@ -119,7 +160,7 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
         set.playTogether(
                 ObjectAnimator.ofFloat(container, "translationX", mWidth / 2 - search.getWidth() / 2),
                 ObjectAnimator.ofFloat(tips, "alpha", 1, 0.0f),
-                ObjectAnimator.ofFloat(input, "Alpha",0, 1)
+                ObjectAnimator.ofFloat(input, "Alpha", 0, 1)
         );
         set.setDuration(500);
         set.addListener(new Animator.AnimatorListener() {
@@ -160,9 +201,9 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
 
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(input, "Alpha", 0 ),
-                ObjectAnimator.ofFloat(container,"translationX", 0),
-                ObjectAnimator.ofFloat(tips, "Alpha",0, 1)
+                ObjectAnimator.ofFloat(input, "Alpha", 0),
+                ObjectAnimator.ofFloat(container, "translationX", 0),
+                ObjectAnimator.ofFloat(tips, "Alpha", 0, 1)
 
         );
         set.addListener(new Animator.AnimatorListener() {
@@ -195,8 +236,8 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        Log.e("haha", "width = " + MeasureSpec.getSize(widthMeasureSpec));
-//        Log.e("haha", "height = " + MeasureSpec.getSize(heightMeasureSpec));
+//        Log.e(TAG, "width = " + MeasureSpec.getSize(widthMeasureSpec));
+//        Log.e(TAG, "height = " + MeasureSpec.getSize(heightMeasureSpec));
 //        mWidth = MeasureSpec.getSize(widthMeasureSpec);
 //        mHeight = MeasureSpec.getSize(heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -204,11 +245,19 @@ public class SearchBar extends RelativeLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        Log.i("haha", "onClick view == " + view.getId());
-        if (isShow) {
-//            onDefault();
-        } else {
+        Log.i(TAG, "onClick view == " + view.getId());
+//        if (isShow) {
+//             onDefault();
+//        } else {
+//
+//        }
+
+        if(!isShow) {
             onInput();
         }
+    }
+
+    public void setSearchCallBack(SearchCallBack mCallBack) {
+        this.mCallBack = mCallBack;
     }
 }
